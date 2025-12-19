@@ -48,7 +48,7 @@ A separate level of decision making (in addition to the ML model) can factor in 
 
 ## Project Structure
 
-'''text
+```text
 src/
 ├── data/        # Data loaders
 ├── features/    # Feature engineering
@@ -58,14 +58,14 @@ src/
 ├── config/      # Constants & feature masks
 models/
 └── v1/          # Frozen model artifacts
-'''
+```
 
 ## How to Run
-'''bash
+```bash
 python -m src.models.train_gbm_models
 python -m src.models.calibrate_models
 python -m src.inference.predict_ranks
-'''
+```
 
 ## Model Versioning
 
