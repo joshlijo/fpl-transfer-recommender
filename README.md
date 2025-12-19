@@ -1,4 +1,4 @@
-# Fantasy Premier League Ranking & Transfer Recommendation System
+# Fantasy Premier League Points Prediction & Transfer Recommendation System
 
 ## Overview
 
