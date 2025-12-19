@@ -30,7 +30,6 @@ def _aggregate_window(df: pd.DataFrame, window: int) -> pd.DataFrame:
             minutes_sum=("minutes", "sum"),
             minutes_avg=("minutes", "mean"),
 
-            # Controlled outcome signal
             ppg=("event_points", "mean"),
 
             goals_avg=("goals_scored", "mean"),
@@ -45,7 +44,6 @@ def _aggregate_window(df: pd.DataFrame, window: int) -> pd.DataFrame:
         .reset_index()
     )
 
-    # Rename columns to window-specific names
     agg = agg.rename(
         columns={
             "appearances": f"appearances_last_{window}",
@@ -74,7 +72,6 @@ def build_rolling_form_features(player_gw_df: pd.DataFrame) -> pd.DataFrame:
 
     df = player_gw_df.copy()
 
-    # Hard safety check
     if df.columns.tolist().count("gameweek") > 1:
         raise ValueError("Duplicate 'gameweek' column detected")
 
@@ -99,32 +96,21 @@ def build_rolling_form_features(player_gw_df: pd.DataFrame) -> pd.DataFrame:
 
     features = features.fillna(0.0)
 
-    # -------------------------------------------------
-    # CONTROLLED PPG (CRITICAL)
-    # -------------------------------------------------
-
     if (
         "ppg_last_5" in features.columns
         and "minutes_avg_last_5" in features.columns
         and "appearances_last_5" in features.columns
     ):
-        # 1. Minutes dampening (penalize cameos)
         features["ppg_last_5"] = (
             features["ppg_last_5"]
             * (features["minutes_avg_last_5"] / 90.0).clip(0.4, 1.0)
         )
 
-        # 2. Appearance dampening (small sample penalty)
         features["ppg_last_5"] *= (
             features["appearances_last_5"] / 5.0
         ).clip(0.4, 1.0)
 
-        # 3. Hard clip to realistic FPL range
         features["ppg_last_5"] = features["ppg_last_5"].clip(0.0, 7.0)
-
-    # -------------------------------------------------
-    # Low-confidence flag
-    # -------------------------------------------------
 
     features["low_confidence"] = (
         (features["appearances_last_5"] < LOW_CONFIDENCE_GAMES_THRESHOLD)

@@ -12,11 +12,6 @@ from scipy.stats import spearmanr
 from src.pipeline.build_training_dataset import build_training_dataset
 from src.config.feature_masks import RANK_FEATURE_MASKS
 
-
-# -------------------------------------------------
-# Config
-# -------------------------------------------------
-
 START_GW = 6
 END_GW = 16
 
@@ -29,22 +24,12 @@ GBM_PARAMS = dict(
     random_state=42,
 )
 
-
-# -------------------------------------------------
-# Metrics
-# -------------------------------------------------
-
 def evaluate(y_true, y_pred):
     return {
         "rmse": np.sqrt(mean_squared_error(y_true, y_pred)),
         "mae": mean_absolute_error(y_true, y_pred),
         "spearman": spearmanr(y_true, y_pred).correlation,
     }
-
-
-# -------------------------------------------------
-# Rolling CV
-# -------------------------------------------------
 
 def run_rolling_cv(df: pd.DataFrame, position: str):
     features = RANK_FEATURE_MASKS[position]
@@ -75,11 +60,6 @@ def run_rolling_cv(df: pd.DataFrame, position: str):
         fold_metrics.append(metrics)
 
     return pd.DataFrame(fold_metrics)
-
-
-# -------------------------------------------------
-# Entrypoint
-# -------------------------------------------------
 
 if __name__ == "__main__":
     print("\n=== PHASE 3A — ROLLING CV (RANKING) ===\n")

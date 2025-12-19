@@ -11,17 +11,8 @@ from src.config.constants import (
     POINT_CAPS,
 )
 
-# -------------------------------------------------
-# Utility
-# -------------------------------------------------
-
 def clamp(x, low, high):
     return max(low, min(high, x))
-
-
-# -------------------------------------------------
-# Core prediction logic
-# -------------------------------------------------
 
 def compute_base_points(row: pd.Series) -> float:
     return (

@@ -14,10 +14,6 @@ from src.data.schema import (
     normalize_fixtures_df,
 )
 
-# -------------------------------------------------
-# Base paths
-# -------------------------------------------------
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 DATA_ROOT = (
@@ -30,18 +26,8 @@ DATA_ROOT = (
 DEFAULT_SEASON = "2025-2026"
 DEFAULT_TOURNAMENT = "Premier League"
 
-
-# -------------------------------------------------
-# Helpers
-# -------------------------------------------------
-
 def _season_path(season: str) -> Path:
     return DATA_ROOT / season / "By Tournament" / DEFAULT_TOURNAMENT
-
-
-# -------------------------------------------------
-# Loaders
-# -------------------------------------------------
 
 def load_player_gameweeks(
     gws: list[int],
@@ -65,7 +51,6 @@ def load_player_gameweeks(
 
         df = pd.read_csv(path)
 
-        # ✅ authoritative gameweek assignment
         df["gameweek"] = gw
 
         df = normalize_player_gameweek_df(df)

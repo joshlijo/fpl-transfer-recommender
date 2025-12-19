@@ -18,21 +18,11 @@ from scipy.stats import spearmanr
 from src.pipeline.build_training_dataset import build_training_dataset
 from src.config.feature_masks import RANK_FEATURE_MASKS
 
-
-# -------------------------------------------------
-# Config
-# -------------------------------------------------
-
 POSITIONS = ["Goalkeeper", "Defender", "Midfielder", "Forward"]
 TARGET = "target_points"
 
 MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(exist_ok=True)
-
-
-# -------------------------------------------------
-# Evaluation
-# -------------------------------------------------
 
 def evaluate(y_true, y_pred):
     return {
@@ -41,18 +31,12 @@ def evaluate(y_true, y_pred):
         "spearman": spearmanr(y_true, y_pred).correlation,
     }
 
-
-# -------------------------------------------------
-# Training
-# -------------------------------------------------
-
 def train_position_model(df: pd.DataFrame, position: str):
     print(f"\n=== TRAINING {position.upper()} MODEL ===")
 
     pos_df = df[df["position"] == position].copy()
     features = RANK_FEATURE_MASKS[position]
 
-    # Time-aware split
     train_df = pos_df[pos_df["target_gw"] <= 14]
     val_df = pos_df[pos_df["target_gw"] > 14]
 
@@ -85,11 +69,6 @@ def train_position_model(df: pd.DataFrame, position: str):
     print(f"\nSaved model → {model_path}")
 
     return val_metrics
-
-
-# -------------------------------------------------
-# Entrypoint
-# -------------------------------------------------
 
 if __name__ == "__main__":
     print("\n=== PHASE 3A — RANKING MODELS ===\n")

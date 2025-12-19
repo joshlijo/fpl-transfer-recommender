@@ -13,11 +13,6 @@ IMPORTANT:
 
 import pandas as pd
 
-
-# -------------------------------------------------
-# Generic helpers
-# -------------------------------------------------
-
 def _require_columns(df: pd.DataFrame, required: list, context: str):
     missing = [c for c in required if c not in df.columns]
     if missing:
@@ -29,11 +24,6 @@ def _require_columns(df: pd.DataFrame, required: list, context: str):
 def _rename_if_present(df: pd.DataFrame, mapping: dict) -> pd.DataFrame:
     rename_map = {k: v for k, v in mapping.items() if k in df.columns}
     return df.rename(columns=rename_map)
-
-
-# -------------------------------------------------
-# Player gameweek stats
-# -------------------------------------------------
 
 def normalize_player_gameweek_df(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -47,7 +37,6 @@ def normalize_player_gameweek_df(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.copy()
 
-    # Column name reconciliation (ID ONLY)
     df = _rename_if_present(
         df,
         {
@@ -61,17 +50,11 @@ def normalize_player_gameweek_df(df: pd.DataFrame) -> pd.DataFrame:
         context="player_gameweek_stats",
     )
 
-    # Dtypes
     df["player_id"] = df["player_id"].astype(int)
     df["gameweek"] = df["gameweek"].astype(int)
     df["minutes"] = df["minutes"].fillna(0).astype(float)
 
     return df
-
-
-# -------------------------------------------------
-# Players
-# -------------------------------------------------
 
 def normalize_players_df(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -117,11 +100,6 @@ def normalize_players_df(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-
-# -------------------------------------------------
-# Fixtures
-# -------------------------------------------------
-
 def normalize_fixtures_df(df: pd.DataFrame) -> pd.DataFrame:
     """
     Normalizes fixtures.csv.
@@ -136,7 +114,6 @@ def normalize_fixtures_df(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.copy()
 
-    # ⚠️ DO NOT invent gameweek — assume it exists
     df = _rename_if_present(
         df,
         {

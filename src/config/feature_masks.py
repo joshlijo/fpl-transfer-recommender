@@ -6,30 +6,25 @@ Must stay in sync with feature builders.
 """
 
 COMMON_BASE = [
-    # Minutes / availability
     "minutes_avg_last_5",
     "minutes_sum_last_5",
     "appearances_last_5",
 
-    # Offensive underlying stats
     "xg_avg_last_5",
     "xa_avg_last_5",
     "goals_avg_last_5",
     "assists_avg_last_5",
     "ppg_last_5",
 
-    # Defensive / GK stats
     "defcon_avg_last_5",
     "saves_avg_last_5",
     "goals_conceded_avg_last_5",
 
-    # Momentum
     "xg_trend",
     "xa_trend",
     "minutes_trend",
     "defcon_trend",
 
-    # Context
     "fixture_difficulty",
     "low_confidence",
 ]

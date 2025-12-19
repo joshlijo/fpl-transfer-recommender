@@ -13,16 +13,8 @@ This establishes the first ML benchmark against heuristics.
 import sys
 from pathlib import Path
 
-# -------------------------------------------------
-# Add project root to PYTHONPATH
-# -------------------------------------------------
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(PROJECT_ROOT))
-
-# -------------------------------------------------
-# Imports
-# -------------------------------------------------
 
 from typing import List, Tuple
 import pandas as pd
@@ -33,20 +25,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 from src.pipeline.build_training_dataset import build_training_dataset
 
-
-# -------------------------------------------------
-# Feature configuration (LOCKED)
-# -------------------------------------------------
-
 NUMERIC_FEATURES: List[str] = [
-    # Rolling form
     "ppg_last_1",
     "ppg_last_3",
     "ppg_last_5",
     "minutes_avg_last_5",
     "games_count_last_5",
 
-    # Underlying stats
     "xg_avg_last_5",
     "xa_avg_last_5",
     "goals_avg_last_5",
@@ -55,7 +40,6 @@ NUMERIC_FEATURES: List[str] = [
     "saves_avg_last_5",
     "goals_conceded_avg_last_5",
 
-    # Fixture context
     "fixture_multiplier",
     "effective_elo_diff",
     "is_home",
@@ -63,11 +47,6 @@ NUMERIC_FEATURES: List[str] = [
 
 TARGET_COL = "target_points"
 TIME_COL = "target_gw"
-
-
-# -------------------------------------------------
-# Utilities
-# -------------------------------------------------
 
 def time_based_split(
     df: pd.DataFrame,
@@ -100,10 +79,6 @@ def evaluate(
         "mae": mean_absolute_error(y_true, y_pred),
     }
 
-# -------------------------------------------------
-# Main training routine
-# -------------------------------------------------
-
 def train_baseline_model(
     start_gw: int,
     end_gw: int,
@@ -116,10 +91,6 @@ def train_baseline_model(
 
     print("\n=== TRAINING BASELINE LINEAR REGRESSION ===\n")
 
-    # -------------------------------------------------
-    # 1. Build training dataset
-    # -------------------------------------------------
-
     df = build_training_dataset(
         start_gw=start_gw,
         end_gw=end_gw,
@@ -129,16 +100,8 @@ def train_baseline_model(
     print(f"Dataset shape: {df.shape}")
     print(f"Target mean: {df[TARGET_COL].mean():.3f}\n")
 
-    # -------------------------------------------------
-    # 2. Feature matrix
-    # -------------------------------------------------
-
     X = df[NUMERIC_FEATURES].fillna(0.0)
     y = df[TARGET_COL].values
-
-    # -------------------------------------------------
-    # 3. Time-based split
-    # -------------------------------------------------
 
     train_df, val_df = time_based_split(df, train_gw_end=train_gw_end)
 
@@ -151,16 +114,8 @@ def train_baseline_model(
     print(f"Train rows: {len(train_df)}")
     print(f"Val rows:   {len(val_df)}\n")
 
-    # -------------------------------------------------
-    # 4. Train model
-    # -------------------------------------------------
-
     model = LinearRegression(n_jobs=-1)
     model.fit(X_train, y_train)
-
-    # -------------------------------------------------
-    # 5. Evaluate
-    # -------------------------------------------------
 
     train_preds = model.predict(X_train)
     val_preds = model.predict(X_val)
@@ -175,10 +130,6 @@ def train_baseline_model(
     print("VALIDATION METRICS")
     print(f"RMSE: {val_metrics['rmse']:.3f}")
     print(f"MAE:  {val_metrics['mae']:.3f}\n")
-
-    # -------------------------------------------------
-    # 6. Coefficient inspection (VERY IMPORTANT)
-    # -------------------------------------------------
 
     coef_df = (
         pd.DataFrame(
@@ -201,13 +152,7 @@ def train_baseline_model(
 
     return model, coef_df, val_metrics
 
-
-# -------------------------------------------------
-# CLI usage
-# -------------------------------------------------
-
 if __name__ == "__main__":
-    # Example: GW6–16 dataset, validate on GW15–16
     train_baseline_model(
         start_gw=6,
         end_gw=16,

@@ -10,10 +10,6 @@ from src.config.constants import (
     CS_BONUS_NEGATIVE,
 )
 
-# -------------------------------------------------
-# Utility
-# -------------------------------------------------
-
 def clamp(x, low, high):
     return max(low, min(high, x))
 
@@ -33,11 +29,6 @@ def elo_to_difficulty_bucket(effective_elo_diff: float) -> int:
 def elo_to_base_multiplier(effective_elo_diff: float) -> float:
     raw = 1 + (effective_elo_diff / 600)
     return clamp(raw, FIXTURE_MULTIPLIER_MIN, FIXTURE_MULTIPLIER_MAX)
-
-
-# -------------------------------------------------
-# Core Logic
-# -------------------------------------------------
 
 def explode_fixtures(fixtures_df: pd.DataFrame) -> pd.DataFrame:
     home = pd.DataFrame({

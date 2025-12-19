@@ -59,7 +59,6 @@ def build_training_dataset(
             )
         )
 
-        # Standardize fixture difficulty column name
         if "fixture_multiplier" in feature_df.columns:
             feature_df = feature_df.rename(
                 columns={"fixture_multiplier": "fixture_difficulty"}

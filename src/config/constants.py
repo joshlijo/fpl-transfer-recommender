@@ -9,19 +9,10 @@ All numerical assumptions used in:
 MUST live here.
 """
 
-# -------------------------------------------------
-# Rolling form
-# -------------------------------------------------
-
 ROLLING_WINDOWS = [1, 3, 5]
 
 LOW_CONFIDENCE_GAMES_THRESHOLD = 3
 LOW_CONFIDENCE_MINUTES_THRESHOLD = 60
-
-
-# -------------------------------------------------
-# Fixture difficulty
-# -------------------------------------------------
 
 HOME_ELO_BONUS = 50
 
@@ -40,21 +31,11 @@ CS_BONUS_ELO_THRESHOLD = 75
 CS_BONUS_POSITIVE = 0.6
 CS_BONUS_NEGATIVE = -0.4
 
-
-# -------------------------------------------------
-# Point prediction — base weighting
-# -------------------------------------------------
-
 PPG_WEIGHTS = {
     "last_5": 0.55,
     "last_3": 0.30,
     "last_1": 0.15,
 }
-
-
-# -------------------------------------------------
-# Point prediction — adjustments
-# -------------------------------------------------
 
 ATTACK_DELTA_CAP = 0.6
 DEF_DELTA_CAP = 0.5
@@ -62,18 +43,8 @@ DEF_DELTA_CAP = 0.5
 GK_DELTA_MIN = -0.5
 GK_DELTA_MAX = 0.8
 
-
-# -------------------------------------------------
-# Minutes reliability
-# -------------------------------------------------
-
 MIN_MINUTES_FACTOR = 0.4
 MAX_MINUTES_FACTOR = 1.0
-
-
-# -------------------------------------------------
-# Final sanity caps (per GW)
-# -------------------------------------------------
 
 POINT_CAPS = {
     "Goalkeeper": (1.5, 8.0),
