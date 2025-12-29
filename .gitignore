@@ -1,0 +1,12 @@
+# data (never commit)
+data/raw/fpl-elo-insights/
+
+# python junk
+__pycache__/
+*.pyc
+*.pkl
+*.joblib
+
+# virtual env
+venv/
+.env

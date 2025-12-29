@@ -9,9 +9,9 @@ MODELS_DIR = "models"
 POSITIONS = ["Goalkeeper", "Defender", "Midfielder", "Forward"]
 
 
-def predict_ranks(current_gw: int):
-
-    df = build_predictions(current_gw=current_gw)
+def predict_ranks():
+    # 🔑 DO NOT pass current_gw — let pipeline decide
+    df = build_predictions()
     outputs = []
 
     for position in POSITIONS:
@@ -24,8 +24,9 @@ def predict_ranks(current_gw: int):
         model = joblib.load(f"{MODELS_DIR}/{position.lower()}_gbm.pkl")
         pos_df["raw_score"] = model.predict(pos_df[features])
 
-        calibrator_path = f"{MODELS_DIR}/{position.lower()}_calibrator.pkl"
-        calibrator = joblib.load(calibrator_path)
+        calibrator = joblib.load(
+            f"{MODELS_DIR}/{position.lower()}_calibrator.pkl"
+        )
 
         pos_df["predicted_points"] = calibrator.predict(
             pos_df["raw_score"].values.reshape(-1, 1)
@@ -36,17 +37,20 @@ def predict_ranks(current_gw: int):
 
     final_df = (
         pd.concat(outputs)
-        .sort_values(["position", "predicted_points"], ascending=[True, False])
+        .sort_values(
+            ["position", "predicted_points"],
+            ascending=[True, False],
+        )
     )
 
     return final_df
 
 
 if __name__ == "__main__":
-    CURRENT_GW = 16
-    df = predict_ranks(current_gw=CURRENT_GW)
+    df = predict_ranks()
 
-    print(f"\n=== RANKED PREDICTIONS FOR GW {CURRENT_GW + 1} ===\n")
+    target_gw = int(df["target_gw"].iloc[0])
+    print(f"\n=== RANKED PREDICTIONS FOR GW {target_gw} ===\n")
 
     for pos in df["position"].unique():
         print(f"\n--- TOP 10 {pos.upper()} ---")

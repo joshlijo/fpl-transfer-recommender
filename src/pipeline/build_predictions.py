@@ -15,17 +15,17 @@ from src.data.loaders import (
     load_player_gameweeks,
     load_players,
     load_fixtures,
+    get_last_completed_gw,
 )
 
 from src.features.rolling_form import build_rolling_form_features
 from src.features.fixture_difficulty import build_fixture_difficulty
-
 from src.features.relative_features import add_relative_features
 from src.features.trend_features import add_trend_features
 
 
 def build_predictions(
-    current_gw: int,
+    current_gw: int | None = None,
     horizon: int = 5,
     season: str = "2025-2026",
 ) -> pd.DataFrame:
@@ -33,19 +33,22 @@ def build_predictions(
     Build ML-ready feature table for predicting NEXT gameweek points.
     """
 
+    # 🔑 SINGLE SOURCE OF TRUTH FOR CURRENT GW
     if current_gw is None:
-        from src.config.settings import CURRENT_GW
-        current_gw = CURRENT_GW
+        current_gw = get_last_completed_gw(season)
 
     next_gw = current_gw + 1
 
+    # rolling form (strictly causal)
     form_gws = list(range(current_gw - horizon, current_gw))
     player_gw_df = load_player_gameweeks(form_gws, season=season)
 
     if player_gw_df.empty:
         return pd.DataFrame()
 
-    players_df = load_players(current_gw, season=season)
+    # IMPORTANT:
+    # players.csv snapshot lags by 1 GW in FPL-Core-Insights
+    players_df = load_players(current_gw - 1, season=season)
     fixtures_df = load_fixtures(next_gw, season=season)
 
     if players_df.empty or fixtures_df.empty:
@@ -80,8 +83,7 @@ def build_predictions(
     prediction_df = add_relative_features(prediction_df)
     prediction_df = add_trend_features(prediction_df)
 
-    prediction_df = prediction_df.sort_values(
-        ["position", "player_id"]
-    ).reset_index(drop=True)
-
-    return prediction_df
+    return (
+        prediction_df.sort_values(["position", "player_id"])
+        .reset_index(drop=True)
+    )
